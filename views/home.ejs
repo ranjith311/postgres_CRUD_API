@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css" rel="stylesheet" />
+
+
+
+</head>
+
+<body>
+
+    <section class="vh-100" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-md-12 col-xl-10">
+
+                    <div class="card">
+
+
+                        <div class="card-header p-3">
+                            <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Task List</h5>
+                        </div>
+                        <div class="card-body py-3">
+                            <div>
+
+                                <div id="err"  style="display: none;" class="err">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                        <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                        </symbol>
+                                      </svg>
+                                      
+                                      
+                                      <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                                        <div >
+                                         <span id="err-msg"></span> 
+                                        </div>
+                                      </div>
+                                </div>
+                                
+                                <form class="d-flex justify-content-center align-items-center mb-4">
+                                    <div class="form-outline flex-fill">
+                                        <!-- <textarea class="form-control form-control-lg" name="" id="form3" cols="2" rows="2"></textarea> -->
+                                        <input type="text" id="form3" class="form-control form-control-lg" />
+                                        <label class="form-label" for="form3">What do you need to do today?</label>
+                                    </div>
+                                    <button disabled id="submit" type="submit"
+                                        class="btn btn-primary btn-lg ms-2">Add</button>
+                                </form>
+                            </div>
+
+
+                            <div id="radios" class="radios">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="high"
+                                        value="High Priority" />
+                                    <label class="form-check-label" for="inlineRadio1">High Priority</label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="low"
+                                        value="Low Priority" />
+                                    <label class="form-check-label" for="inlineRadio2">Low Priority</label>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="card-body" data-mdb-perfect-scrollbar="true"
+                            style="position: relative; height: 400px ;overflow: auto;">
+
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+
+                                        <th scope="col">Task</th>
+                                        <th scope="col">Priority</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% todos.forEach((item)=>{ %>
+                                        <tr class="fw-normal">
+                                            <td class="align-middle">
+                                                <span><%=item.todo%> </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <% if(item.priority == "High Priority"){%> 
+                                                <h6 class="mb-0"><span class="badge bg-danger"><%= item.priority %> </span></h6>
+                                                <% }else{%>
+                                                    <h6 class="mb-0"><span class="badge bg-success"><%= item.priority %> </span></h6>
+                                                <% } %>  
+                                            </td>
+                                            <td class="align-middle">
+                                               
+                                                
+                                       
+                                                    <a onclick="completed('<%=item.id%>','<%=item.status%>')" style="cursor: pointer;" data-mdb-toggle="tooltip" title="Remove"><span id="todoStatus"><%=item.status%></span></a>
+                                           
+                                                   
+                                              
+                                                    
+                                             
+                                                <a onclick="remove('<%=item.id%>')" style="cursor: pointer;" data-mdb-toggle="tooltip" title="Remove"><i
+                                                        class="fas fa-trash-alt text-danger fa-lg"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                  <%  }) %> 
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const radios = document.getElementById("radios")
+        radios.style.display = 'none'
+        const form3 = document.getElementById("form3")
+        const submit = document.getElementById("submit")
+        const high = document.getElementById("high")
+        const low = document.getElementById("low")
+        const err = document.getElementById("err")
+        const err_msg =document.getElementById("err-msg")
+
+    
+        let status;
+        const completed =async (id,state)=>{
+
+           console.log("State :",state)
+           if(state == "Pending"){
+            status = "Completed"
+           }else{
+            status = "Pending"
+           }
+           
+            const info = {
+                id:id,
+                status:status
+            }
+            console.log("Status :",info)
+           try {
+            const res = await fetch("/api/todo", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(info),
+            })
+            const result  = await res.json()
+            console.log(result)
+           if(result.success){
+            document.getElementById("todoStatus").innerText = result.data 
+           }
+           } catch (error) {
+            console.log(error);
+           }
+            
+        }
+
+
+
+
+        const remove =async(id)=>{
+            
+           try {
+            const res = await fetch("/api/todo", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({id}),
+            })
+            const result  = await res.json()
+            window.location.href = result.response
+           } catch (error) {
+            console.log(error.message)
+           }
+           
+        }
+
+
+        const todo = {}
+        high.addEventListener("change", (e) => {
+            todo.priority = e.target.value
+        })
+        low.addEventListener("change", (e) => {
+            todo.priority = e.target.value
+        })
+
+        form3.addEventListener("keyup", (e) => {
+            if (form3.value.length == 0) {
+                submit.setAttribute("disabled", "true")
+                radios.style.display = 'none'
+            } else {
+                radios.style.display = 'block'
+                submit.removeAttribute("disabled");
+            }
+        })
+
+        submit.addEventListener("click", async(e) => {
+            e.preventDefault()
+           try {
+            todo.todo = form3.value.trim()
+           const res = await fetch("/api/todo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(todo),
+            })
+            const result  = await res.json()
+            if(result.success){
+                window.location.href = result.response
+            }else{
+                err_msg.innerText = result.response
+                err.style.display = "block"
+                console.log(result.response)
+            }
+           } catch (error) {
+            console.log(error);
+           }
+        })
+    </script>
+</body>
+
+</html>
